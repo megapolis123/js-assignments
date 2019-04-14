@@ -22,7 +22,7 @@
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
 function parseDataFromRfc2822(value) {
-   throw new Error('Not implemented');
+   return Date.parse(value);
 }
 
 /**
@@ -37,7 +37,7 @@ function parseDataFromRfc2822(value) {
  *    '2016-01-19T08:07:37Z' => Date()
  */
 function parseDataFromIso8601(value) {
-   throw new Error('Not implemented');
+   return Date.parse(value);
 }
 
 
@@ -56,7 +56,8 @@ function parseDataFromIso8601(value) {
  *    Date(2015,1,1)    => false
  */
 function isLeapYear(date) {
-   throw new Error('Not implemented');
+   let year = date.getFullYear();
+   return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
 }
 
 
@@ -76,7 +77,17 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
 function timeSpanToString(startDate, endDate) {
-   throw new Error('Not implemented');
+   let duration = (endDate - startDate);
+   let milliseconds = parseInt((duration % 1000));
+   let seconds = Math.floor((duration / 1000) % 60);
+   let minutes = Math.floor((duration / (1000 * 60)) % 60);
+   let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+   
+   (milliseconds) ? milliseconds : milliseconds = '000';
+   (seconds) ? seconds : seconds = '00';
+   (minutes) ? minutes : minutes = '00';
+
+   return `0${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
 
@@ -94,7 +105,34 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
 function angleBetweenClockHands(date) {
-    throw new Error('Not implemented');
+   let newDate = new Date(date);
+   let hours = newDate.getUTCHours();
+   let minutes = newDate.getUTCMinutes();
+   let result;
+
+   if (hours > 12) {
+       hours -= 12;
+   }
+   if (minutes > 0) {
+       minutes /= 5;
+   }
+
+   if (Math.abs(hours - minutes) > 6) {
+       result = Math.abs(hours - minutes) - 6;
+   } else {
+       result = Math.abs(hours - minutes);
+   }
+
+   if (minutes > 0) {
+       minutes = minutes/12;
+       if (result - Math.abs(minutes) > 0) {
+           result -= minutes;
+       } else {
+           result += Math.abs(minutes);
+       }
+   }
+
+   return (result * (Math.PI / 6)).toFixed(16);
 }
 
 
